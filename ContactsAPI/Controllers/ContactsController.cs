@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ContactsAPI.Data;
 using ContactsAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ContactsAPI.Controllers
 {
@@ -24,8 +27,12 @@ namespace ContactsAPI.Controllers
 
         // GET: api/Contacts
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
         public async Task<ActionResult<IEnumerable<Contact>>> GetContacts()
         {
+            // Retrieve the user's userId
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+
             return await _context.Contacts.ToListAsync();
         }
 
@@ -101,6 +108,7 @@ namespace ContactsAPI.Controllers
 
         // DELETE: api/Contacts/5
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<IActionResult> DeleteContact(int id)
         {
             var contact = await _context.Contacts.FindAsync(id);

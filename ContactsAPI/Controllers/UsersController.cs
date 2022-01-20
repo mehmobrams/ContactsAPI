@@ -10,52 +10,57 @@ using ContactsAPI.Data;
 using ContactsAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ContactsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SkillsController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly ContactsdbContext _context;
 
-        public SkillsController(ContactsdbContext context)
+        public UsersController(ContactsdbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Skills
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Skill>>> GetSkills()
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Skills.ToListAsync();
+            // Retrieve the user's userId
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+
+            return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Skills/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Skill>> GetSkill(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var skill = await _context.Skills.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (skill == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return skill;
+            return user;
         }
 
-        // PUT: api/Skills/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSkill(int id, Skill skill)
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != skill.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(skill).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -63,7 +68,7 @@ namespace ContactsAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SkillExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -76,19 +81,19 @@ namespace ContactsAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Skills
+        // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Skill>> PostSkill(Skill skill)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Skills.Add(skill);
+            _context.Users.Add(user);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (SkillExists(skill.Id))
+                if (UserExists(user.Id))
                 {
                     return Conflict();
                 }
@@ -98,29 +103,29 @@ namespace ContactsAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetSkill", new { id = skill.Id }, skill);
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
-        // DELETE: api/Skills/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
-        public async Task<IActionResult> DeleteSkill(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var skill = await _context.Skills.FindAsync(id);
-            if (skill == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Skills.Remove(skill);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SkillExists(int id)
+        private bool UserExists(int id)
         {
-            return _context.Skills.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

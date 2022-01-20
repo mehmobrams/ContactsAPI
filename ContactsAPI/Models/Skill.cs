@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ContactsAPI.Models
 {
@@ -12,9 +11,8 @@ namespace ContactsAPI.Models
         {
             ContactSkills = new HashSet<ContactSkill>();
         }
-        
+
         public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
 
         public virtual ICollection<ContactSkill> ContactSkills { get; set; }

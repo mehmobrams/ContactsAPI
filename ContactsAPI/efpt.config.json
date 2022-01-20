@@ -24,6 +24,10 @@
       {
          "Name": "[dbo].[Skill]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[User]",
+         "ObjectType": 0
       }
    ],
    "UiHint": "DESKTOP-OE7UI1S\\SQLEXPRESS.ContactsDb",

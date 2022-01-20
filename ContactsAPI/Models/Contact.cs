@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ContactsAPI.Models
 {
@@ -14,19 +13,11 @@ namespace ContactsAPI.Models
         }
 
         public int Id { get; set; }
-        [Required]
         public string Firstname { get; set; }
-        [Required]
         public string LastName { get; set; }
-        [Required]
         public string Fullname { get; set; }
-        [Required]
         public string Address { get; set; }
-        [Required]
-        [RegularExpression(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*@((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))\z")]
         public string Email { get; set; }
-        [Required]
-        [RegularExpression(@"(\+41)\s?(\d{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})")]
         public string MobilePhoneNumber { get; set; }
 
         public virtual ICollection<ContactSkill> ContactSkills { get; set; }

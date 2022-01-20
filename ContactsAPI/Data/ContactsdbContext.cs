@@ -22,6 +22,7 @@ namespace ContactsAPI.Data
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<ContactSkill> ContactSkills { get; set; }
         public virtual DbSet<Skill> Skills { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,6 +73,25 @@ namespace ContactsAPI.Data
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("User");
+
+                entity.Property(e => e.EmailAddress).HasMaxLength(50);
+
+                entity.Property(e => e.GivenName).HasMaxLength(50);
+
+                entity.Property(e => e.Password).HasMaxLength(50);
+
+                entity.Property(e => e.Role).HasMaxLength(50);
+
+                entity.Property(e => e.Surname).HasMaxLength(50);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);
