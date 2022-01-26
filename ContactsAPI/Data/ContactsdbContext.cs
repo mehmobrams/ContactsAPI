@@ -43,6 +43,12 @@ namespace ContactsAPI.Data
                 entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.MobilePhoneNumber).HasMaxLength(20);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Contacts)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Contact_User");
             });
 
             modelBuilder.Entity<ContactSkill>(entity =>

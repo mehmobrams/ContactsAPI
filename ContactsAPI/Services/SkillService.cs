@@ -1,5 +1,4 @@
 ﻿using ContactsAPI.Models;
-using ContactsAPI.Repositories;
 
 namespace ContactsAPI.Services
 {

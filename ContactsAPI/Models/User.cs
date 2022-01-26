@@ -7,6 +7,11 @@ namespace ContactsAPI.Models
 {
     public partial class User
     {
+        public User()
+        {
+            Contacts = new HashSet<Contact>();
+        }
+
         public int Id { get; set; }
         public string Username { get; set; }
         public string EmailAddress { get; set; }
@@ -14,5 +19,7 @@ namespace ContactsAPI.Models
         public string GivenName { get; set; }
         public string Surname { get; set; }
         public string Role { get; set; }
+
+        public virtual ICollection<Contact> Contacts { get; set; }
     }
 }

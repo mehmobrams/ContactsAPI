@@ -93,7 +93,7 @@ namespace ContactsAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (ContactExists(contact.Id))
+                if (ContactExists(contact))
                 {
                     return Conflict();
                 }
@@ -102,6 +102,8 @@ namespace ContactsAPI.Controllers
                     throw;
                 }
             }
+
+            _context.Entry(contact).GetDatabaseValues();
 
             return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
         }
@@ -125,7 +127,15 @@ namespace ContactsAPI.Controllers
 
         private bool ContactExists(int id)
         {
-            return _context.Contacts.Any(e => e.Id == id);
+            // Retrieve the user's userId
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User user = _context.Users.First(e => e.Username == userName);
+            return _context.Contacts.Any(e => e.Id == id && e.UserId == user.Id);
+        }
+
+        private bool ContactExists(Contact contact)
+        {
+            return _context.Contacts.Any(e => e.LastName == contact.LastName && e.Firstname == contact.Firstname);
         }
     }
 }

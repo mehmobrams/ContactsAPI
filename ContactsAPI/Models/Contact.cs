@@ -19,7 +19,9 @@ namespace ContactsAPI.Models
         public string Address { get; set; }
         public string Email { get; set; }
         public string MobilePhoneNumber { get; set; }
+        public int UserId { get; set; }
 
+        public virtual User User { get; set; }
         public virtual ICollection<ContactSkill> ContactSkills { get; set; }
     }
 }

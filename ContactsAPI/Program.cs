@@ -8,6 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using ContactsAPI.Data;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +62,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSingleton<ContactsAPI.Services.IUserService, UserService>();
+//builder.Services.AddSingleton<ContactsAPI.Services.IUserService, UserService>();
 
 
 
@@ -76,8 +78,14 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World!")
     .ExcludeFromDescription();
 
+app.MapGet("/users", ([FromServices] ContactsdbContext db) =>
+{
+    return db.Users.ToList();
+
+});
+
 app.MapPost("/login",
-    (UserLogin user, IUserService service) => Login(user, service))
+    (UserLogin user, [FromServices] ContactsdbContext db) => Login(user, db))
     .Accepts<UserLogin>("application/json")
     .Produces<string>();
 
@@ -87,12 +95,18 @@ app.UseAuthentication();
 
 
 
-IResult Login(UserLogin user, IUserService service)
+IResult Login(UserLogin user, ContactsdbContext db)
 {
     if (!string.IsNullOrEmpty(user.Username) &&
         !string.IsNullOrEmpty(user.Password))
     {
-        var loggedInUser = service.Get(user);
+        var loggedInUser = db.Users.FirstOrDefault(o => o.Username.Equals
+             (user.Username) && o.Password.Equals
+             (user.Password));
+
+
+        //var loggedInUserOld = service.Get(user);
+
         if (loggedInUser is null) return Results.NotFound("User not found.");
 
         var claims = new[]
